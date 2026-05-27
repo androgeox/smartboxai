@@ -6,20 +6,22 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: smartboxai-frontend
-    restart: unless-stopped
+    restart: always
     labels:
+      # Включить для Traefik
       - "traefik.enable=true"
-      - "traefik.http.routers.smartboxai.rule=Host(`smartboxai.yourdomain.com`)"
-      - "traefik.http.routers.smartboxai.entrypoints=web"
+      # Правило маршрутизации (замените на ваш домен)
+      - "traefik.http.routers.smartboxai.rule=Host(`smartboxai.ru`)"
+      # Entry points
+      - "traefik.http.routers.smartboxai.entrypoints=web,websecure"
+      # TLS сертификат
+      - "traefik.http.routers.smartboxai.tls=true"
+      - "traefik.http.routers.smartboxai.tls.certresolver=mytlschallenge"
+      # Порт сервиса
       - "traefik.http.services.smartboxai.loadbalancer.server.port=80"
-      # SSL через Traefik (если нужен HTTPS)
-      # - "traefik.http.routers.smartboxai-secure.rule=Host(`smartboxai.yourdomain.com`)"
-      # - "traefik.http.routers.smartboxai-secure.entrypoints=websecure"
-      # - "traefik.http.routers.smartboxai-secure.tls=true"
-      # - "traefik.http.routers.smartboxai-secure.tls.certresolver=letsencrypt"
     networks:
-      - traefik-public
+      - n8n_default
 
 networks:
-  traefik-public:
+  n8n_default:
     external: true

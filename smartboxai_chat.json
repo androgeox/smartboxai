@@ -1,0 +1,246 @@
+{
+  "name": "SmartBoxAI Chat — Conversational Agent",
+  "version": 1,
+  "nodes": [
+    {
+      "id": "webhook-in",
+      "name": "Webhook (входящее сообщение)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [240, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "smartboxai-chat",
+        "responseMode": "lastNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "set-input",
+      "name": "Извлечь message и sessionId",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [460, 300],
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "message",
+              "value": "={{ $json.message || $json.body?.message || $json.text || '' }}"
+            },
+            {
+              "name": "sessionId",
+              "value": "={{ $json.sessionId || $json.body?.sessionId || $json.session_id || 'anon_' + $now.toISO() }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "validate",
+      "name": "Валидация (не пусто)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 300],
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.message }}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "fallback-empty",
+      "name": "Ответ на пустое",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [900, 460],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": {
+          "values": {
+            "string": [
+              {
+                "name": "reply",
+                "value": "Пожалуйста, напишите сообщение. Я не могу ответить на пустой запрос."
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "ai-agent",
+      "name": "AI Agent — SmartBoxAI",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [900, 300],
+      "parameters": {
+        "agent": "conversationalAgent",
+        "options": {}
+      }
+    },
+    {
+      "id": "llm",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.0,
+      "position": [680, 140],
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "temperature": 0.7,
+        "maxTokens": 1024,
+        "options": {
+          "systemMessage": "Ты ИИ-ассистент SmartBoxAI — экспертной компании по внедрению ИИ-автоматизации для бизнеса.\n\nТвоя роль:\n1. Отвечать на вопросы о решениях SmartBoxAI: ИИ-агенты, автоматизация процессов, ИИ-ассистенты.\n2. Квалифицировать обращения: выяснять, какой процесс хочет автоматизировать пользователь, определять подходящий тип решения.\n3. Собирать ключевую информацию: размер компании, текущий стек/инструменты, основные боли, ожидаемый результат.\n4. Предлагать следующий шаг — созвон-анализ (45 мин, бесплатно), демо или детальное предложение.\n\nПродукты SmartBoxAI:\n• ИИ-агенты — автономно выполняют задачи (исследования, квалификация лидов, аутрич, мониторинг) 24/7 без участия человека. Результат: −15 ч/нед рутины, ×8 быстрее обработка.\n• Автоматизация процессов — связываем CRM, почту, мессенджеры, таблицы в единый конвейер. Данные перемещаются сами. Результат: −3 ч/день на ручной перенос, до −90% ошибок.\n• ИИ-ассистенты — чат-боты, обученные на базе знаний клиента, для поддержки, продаж и операций. Результат: до 70% обращений закрывается без сотрудника, −60% затрат на поддержку.\n\nПроцесс работы:\nШаг 1 — созвон-анализ (45 мин): разбираем процесс, считаем экономию.\nШаг 2 — проектирование (48 ч): отправляем предложение с архитектурой и сроками.\nШаг 3 — разработка (2–4 недели): собираем и тестируем на реальных данных.\nШаг 4 — поддержка: мониторим и развиваем.\n\nУсловия: без предоплаты, NDA по запросу, совместимо с текущим стеком.\n\nПравила общения:\n• Будь полезным и конкретным. Не давай общих ответов.\n• Задавай уточняющие вопросы, чтобы понять потребность.\n• Если пользователь описывает процесс — предложи подходящее решение и объясни почему.\n• Не давай юридических, финансовых или медицинских консультаций.\n• Если вопрос вне компетенции — честно скажи и предложи связаться с командой.\n• Отвечай на русском языке.\n• Длина ответа: обычно 2–5 предложений. Подробнее — только если пользователь просит."
+        }
+      }
+    },
+    {
+      "id": "memory",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.1,
+      "position": [460, 140],
+      "parameters": {
+        "sessionKey": "sessionId",
+        "contextWindowLength": 20,
+        "options": {}
+      }
+    },
+    {
+      "id": "respond",
+      "name": "Ответить в чат",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [1120, 300],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": {
+          "values": {
+            "string": [
+              {
+                "name": "reply",
+                "value": "={{ $json.output || $json.text || $json.response || 'Извините, произошла ошибка. Попробуйте переформулировать вопрос.' }}"
+              }
+            ]
+          }
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "qualification-log",
+      "name": "Лог квалификации (опционально)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1350, 300],
+      "parameters": {},
+      "notes": "Сюда можно добавить узел для сохранения диалога в Google Sheets / CRM / Telegram. Сейчас заглушка."
+    }
+  ],
+  "connections": {
+    "Webhook (входящее сообщение)": {
+      "main": [
+        [
+          {
+            "node": "Извлечь message и sessionId",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Извлечь message и sessionId": {
+      "main": [
+        [
+          {
+            "node": "Валидация (не пусто)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Валидация (не пусто)": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — SmartBoxAI",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ответ на пустое",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — SmartBoxAI": {
+      "main": [
+        [
+          {
+            "node": "Ответить в чат",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ответить в чат": {
+      "main": [
+        [
+          {
+            "node": "Лог квалификации (опционально)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — SmartBoxAI",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent — SmartBoxAI",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "callerPolicy": "workflowsFromSameOwner",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": false,
+    "timezone": "Europe/Moscow"
+  },
+  "staticData": null,
+  "pinData": {},
+  "tags": [
+    { "name": "chat" },
+    { "name": "smartboxai" },
+    { "name": "production" }
+  ]
+}

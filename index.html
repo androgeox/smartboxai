@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -784,17 +784,6 @@
 
     /* Footer */
     .footer-inner   { flex-direction: column; align-items: flex-start; gap: 8px; }
-
-    /* Tweaks panel */
-    #font-panel {
-      bottom: 0;
-      right: 0;
-      left: 0;
-      width: 100%;
-      border-radius: 16px 16px 0 0;
-      max-height: 70vh;
-      overflow-y: auto;
-    }
   }
 
   /* Very small (≤380px) */
@@ -811,6 +800,360 @@
   .form-group select.error,
   .form-group textarea.error {
     border-color: rgba(255, 100, 80, 0.5);
+  }
+  .consent-group input[type="checkbox"].error {
+    border-color: rgba(255, 100, 80, 0.6);
+    box-shadow: 0 0 0 2px rgba(255, 100, 80, 0.12);
+  }
+  .consent-group {
+    flex-direction: row !important;
+    align-items: flex-start;
+    gap: 8px !important;
+    padding: 2px 0;
+  }
+  .consent-group input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--bg);
+    border: 1px solid var(--border-mid);
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
+    transition: border-color 200ms var(--ease), background 200ms var(--ease);
+    margin-top: 1px;
+  }
+  .consent-group input[type="checkbox"]:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .consent-group input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 4px; top: 1px;
+    width: 5px; height: 8px;
+    border: solid var(--bg);
+    border-width: 0 1.5px 1.5px 0;
+    transform: rotate(45deg);
+  }
+  .consent-label {
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--text-2);
+    line-height: 1.45;
+    letter-spacing: 0;
+    text-transform: none;
+    cursor: pointer;
+    user-select: none;
+  }
+  .consent-label a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: opacity 150ms var(--ease);
+  }
+  .consent-label a:hover { opacity: 0.75; }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     CHAT WIDGET
+  ════════════════════════════════════════════════════════════════════════ */
+  #chat-launcher {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 9998;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+    transition: transform 200ms var(--ease), opacity 200ms var(--ease), box-shadow 200ms var(--ease);
+    animation: chatLauncherIn 400ms var(--ease) both;
+  }
+  #chat-launcher:hover {
+    transform: scale(1.07);
+    box-shadow: 0 12px 40px rgba(77,255,160,0.25);
+  }
+  #chat-launcher:active { transform: scale(0.96); }
+  #chat-launcher.hidden { opacity: 0; pointer-events: none; transform: scale(0.8); }
+
+  @keyframes chatLauncherIn {
+    0%   { opacity: 0; transform: scale(0.6); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  .chat-launcher-dot {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px rgba(77,255,160,0.5);
+    animation: chatDotPulse 2s ease-in-out infinite;
+  }
+  @keyframes chatDotPulse {
+    0%, 100% { opacity: 0.5; transform: scale(0.8); }
+    50%      { opacity: 1;   transform: scale(1.2); }
+  }
+
+  #chat-panel {
+    position: fixed;
+    right: 24px;
+    bottom: 96px;
+    z-index: 9997;
+    width: 380px;
+    height: 520px;
+    background: var(--surface);
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.55);
+    transition: opacity 280ms var(--ease), transform 280ms var(--ease);
+  }
+  #chat-panel.closed {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(16px) scale(0.96);
+  }
+  #chat-panel:not(.closed) {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .chat-header {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    height: 56px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(13,17,23,0.92);
+    backdrop-filter: blur(10px);
+  }
+  .chat-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .chat-header-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--accent-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .chat-header-info { display: flex; flex-direction: column; gap: 1px; }
+  .chat-header-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: -0.3px;
+    color: var(--text-1);
+  }
+  .chat-header-status {
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+  }
+  .chat-close-btn {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: color 150ms var(--ease), background 150ms var(--ease);
+    flex-shrink: 0;
+  }
+  .chat-close-btn:hover { color: var(--text-1); background: rgba(255,255,255,0.05); }
+
+  .chat-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    scroll-behavior: smooth;
+  }
+  .chat-body::-webkit-scrollbar { width: 4px; }
+  .chat-body::-webkit-scrollbar-track { background: transparent; }
+  .chat-body::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 4px; }
+
+  .chat-msg {
+    max-width: 82%;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.55;
+    word-wrap: break-word;
+    animation: chatMsgIn 280ms var(--ease) both;
+    position: relative;
+  }
+  @keyframes chatMsgIn {
+    0%   { opacity: 0; transform: translateY(8px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .chat-msg--user {
+    align-self: flex-end;
+    background: var(--accent-dim);
+    color: var(--text-1);
+    border-bottom-right-radius: 4px;
+  }
+  .chat-msg--bot {
+    align-self: flex-start;
+    background: var(--bg);
+    color: var(--text-1);
+    border: 1px solid var(--border);
+    border-bottom-left-radius: 4px;
+  }
+  .chat-msg--error {
+    align-self: center;
+    background: rgba(255,100,80,0.10);
+    color: rgba(255,140,120,0.9);
+    border: 1px solid rgba(255,100,80,0.18);
+    font-size: 12px;
+    text-align: center;
+    max-width: 90%;
+  }
+  .chat-msg-time {
+    font-size: 10px;
+    color: var(--text-4);
+    margin-top: 4px;
+    text-align: right;
+    letter-spacing: 0.2px;
+  }
+  .chat-msg--bot .chat-msg-time { text-align: left; }
+
+  .chat-typing {
+    align-self: flex-start;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px 12px 12px 4px;
+    font-size: 13px;
+    color: var(--text-3);
+    animation: chatMsgIn 280ms var(--ease) both;
+  }
+  .chat-typing-dots { display: flex; gap: 4px; }
+  .chat-typing-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--text-3);
+    animation: chatDotBounce 1.2s ease-in-out infinite;
+  }
+  .chat-typing-dot:nth-child(1) { animation-delay: 0ms; }
+  .chat-typing-dot:nth-child(2) { animation-delay: 180ms; }
+  .chat-typing-dot:nth-child(3) { animation-delay: 360ms; }
+  @keyframes chatDotBounce {
+    0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+    30%           { opacity: 1;   transform: translateY(-4px); }
+  }
+
+  .chat-retry-btn {
+    display: inline-block;
+    margin-top: 6px;
+    background: transparent;
+    border: 1px solid rgba(255,100,80,0.3);
+    color: rgba(255,140,120,0.9);
+    padding: 5px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 400;
+    transition: background 150ms var(--ease), border-color 150ms var(--ease);
+  }
+  .chat-retry-btn:hover { background: rgba(255,100,80,0.08); border-color: rgba(255,100,80,0.5); }
+
+  .chat-footer {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    background: rgba(13,17,23,0.92);
+    backdrop-filter: blur(10px);
+  }
+  .chat-input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border-mid);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text-1);
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 200ms var(--ease);
+    min-width: 0;
+  }
+  .chat-input::placeholder { color: var(--text-4); }
+  .chat-input:focus { border-color: var(--accent); }
+
+  .chat-send-btn {
+    width: 38px; height: 38px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: var(--accent);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 150ms var(--ease), transform 150ms var(--ease);
+  }
+  .chat-send-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+  .chat-send-btn:active { transform: translateY(0); }
+  .chat-send-btn:disabled { opacity: 0.4; cursor: default; transform: none; }
+
+  /* Mobile */
+  @media (max-width: 600px) {
+    #chat-panel {
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      height: 100dvh;
+      border-radius: 0;
+      border: none;
+    }
+    #chat-panel.closed {
+      transform: translateY(32px) scale(0.96);
+    }
+    #chat-launcher {
+      right: 16px;
+      bottom: 16px;
+    }
+    .chat-header { padding: 0 12px; }
+    .chat-body   { padding: 12px; }
+    .chat-footer { padding: 10px 12px; }
+    .chat-msg    { max-width: 88%; font-size: 14px; }
+    .chat-input  { font-size: 16px; /* prevents iOS zoom */ }
   }
 </style>
 </head>
@@ -989,7 +1332,7 @@
   <div class="container">
     <div class="form-header">
       <div class="section-label">Запросить решение</div>
-      <div class="section-title">Расскажите,<br>что вас тормозит</div>
+      <div class="section-title">Расскажите,<br>какая у Вас задача сейчас</div>
       <p>Ответим в течение 24 часов с персональным предложением — без обязательств и без шаблонных писем.</p>
     </div>
 
@@ -1035,6 +1378,13 @@
             <textarea id="description" name="description" rows="4" placeholder="Например: вручную обрабатываем 200+ входящих заявок в неделю — проверяем квалификацию и разносим по менеджерам в CRM. Уходит около 3 часов ежедневно..."></textarea>
           </div>
 
+          <div class="form-group full consent-group" id="consent-group">
+            <input type="checkbox" id="consent" name="consent" value="yes">
+            <label for="consent" class="consent-label">
+              Я согласен на <a href="privacy.html" target="_blank">обработку персональных данных</a> в соответствии с Политикой конфиденциальности и принимаю условия <a href="privacy.html" target="_blank">Пользовательского соглашения</a>
+            </label>
+          </div>
+
           <div class="form-group full">
             <button type="submit" class="btn-submit">Запросить бесплатное предложение →</button>
             <p class="form-note">Без спама. Без давления. Только конкретный ответ по вашей задаче.</p>
@@ -1061,7 +1411,7 @@
       <span class="trust-dot">·</span>
       <span class="trust-item">✦ Предложение за 24 ч</span>
       <span class="trust-dot">·</span>
-      <span class="trust-item">✦ Работает с вашим стеком</span>
+      <span class="trust-item">✦ Работает с вашими решениями</span>
       <span class="trust-dot">·</span>
       <span class="trust-item">✦ NDA по запросу</span>
     </div>
@@ -1109,28 +1459,36 @@
   const formBody = document.getElementById('form-body');
   const formSuccess = document.getElementById('form-success');
 
-  /* 🔗 Вставьте сюда URL вашего webhook из n8n */
-  const N8N_WEBHOOK_URL = 'https://your-n8n-instance.webhook.site/your-unique-id';
+  /* 🔗 URL webhook для формы — n8n workflow leads */
+  const N8N_WEBHOOK_URL = 'https://lajomipimu.beget.app/webhook/smartboxai';
 
   form.addEventListener('submit', function(e) {
     e.preventDefault();
 
     const name = form.querySelector('#name');
     const email = form.querySelector('#email');
+    const consent = form.querySelector('#consent');
+    const consentGroup = form.querySelector('#consent-group');
     const size = form.querySelector('#company-size');
     const type = form.querySelector('#solution-type');
     const desc = form.querySelector('#description');
 
     let valid = true;
-    [name, email, size, type, desc].forEach(function(el) {
+    [name, email].forEach(function(el) {
       el.classList.remove('error');
     });
 
     if (!name.value.trim()) { name.classList.add('error'); valid = false; }
     if (!email.value.trim() || !email.value.includes('@')) { email.classList.add('error'); valid = false; }
-    if (!size.value) { size.classList.add('error'); valid = false; }
-    if (!type.value) { type.classList.add('error'); valid = false; }
-    if (!desc.value.trim() || desc.value.trim().length < 20) { desc.classList.add('error'); valid = false; }
+
+    if (consent && !consent.checked) {
+      consentGroup.classList.add('error');
+      consent.classList.add('error');
+      valid = false;
+    } else {
+      consentGroup.classList.remove('error');
+      consent.classList.remove('error');
+    }
 
     if (!valid) return;
 
@@ -1146,6 +1504,7 @@
       company_size: size.value,
       solution_type: type.value,
       description: desc.value.trim(),
+      consent: consent ? consent.checked : false,
       submitted_at: new Date().toISOString()
     };
 
@@ -1172,444 +1531,209 @@
   });
 
   /* Remove error class on input */
+  if (consent) {
+    consent.addEventListener('change', function() {
+      consent.classList.remove('error');
+      consentGroup.classList.remove('error');
+    });
+  }
+
   form.querySelectorAll('input, select, textarea').forEach(function(el) {
     el.addEventListener('input', function() { el.classList.remove('error'); });
     el.addEventListener('change', function() { el.classList.remove('error'); });
   });
 </script>
 
-<style>
-  /* ── FONT TWEAKS PANEL ── */
-  #font-panel {
-    display: none;
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 9999;
-    background: #0D1117;
-    border: 1px solid rgba(255,255,255,0.10);
-    border-radius: 14px;
-    padding: 20px;
-    width: 260px;
-    box-shadow: 0 24px 64px rgba(0,0,0,0.6);
-  }
-  #font-panel.open { display: block; }
-  .fp-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-  }
-  .fp-title {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 11px;
-    font-weight: 400;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.4);
-  }
-  .fp-close {
-    background: none;
-    border: none;
-    color: rgba(255,255,255,0.3);
-    cursor: pointer;
-    font-size: 18px;
-    line-height: 1;
-    padding: 0;
-    transition: color 150ms ease;
-  }
-  .fp-close:hover { color: rgba(255,255,255,0.8); }
-  .fp-option {
-    padding: 10px 12px;
-    border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.07);
-    cursor: pointer;
-    margin-bottom: 8px;
-    transition: border-color 150ms ease, background 150ms ease;
-  }
-  .fp-divider {
-    height: 1px;
-    background: rgba(255,255,255,0.07);
-    margin: 16px 0;
-  }
-  .fp-slider-label {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 11px;
-    font-weight: 400;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.4);
-    margin-bottom: 10px;
-  }
-  .fp-slider-label span {
-    font-family: 'Exo 2', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0;
-    color: #4DFFA0;
-  }
-  .fp-slider {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 100%;
-    height: 3px;
-    border-radius: 2px;
-    background: rgba(255,255,255,0.12);
-    outline: none;
-    cursor: pointer;
-  }
-  .fp-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 16px; height: 16px;
-    border-radius: 50%;
-    background: #4DFFA0;
-    cursor: pointer;
-    transition: transform 150ms ease, box-shadow 150ms ease;
-  }
-  .fp-slider::-webkit-slider-thumb:hover {
-    transform: scale(1.2);
-    box-shadow: 0 0 10px rgba(77,255,160,0.5);
-  }
-  .fp-slider::-moz-range-thumb {
-    width: 16px; height: 16px;
-    border-radius: 50%;
-    background: #4DFFA0;
-    border: none;
-    cursor: pointer;
-  }
-  .fp-size-presets {
-    display: flex;
-    gap: 6px;
-    margin-top: 10px;
-  }
-  .fp-preset {
-    flex: 1;
-    padding: 5px 0;
-    text-align: center;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 11px;
-    font-weight: 400;
-    color: rgba(255,255,255,0.4);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 6px;
-    cursor: pointer;
-    transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
-  }
-  .fp-preset:hover { border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); }
-  .fp-preset.active { border-color: rgba(77,255,160,0.4); color: #4DFFA0; background: rgba(77,255,160,0.06); }
-  .fp-option:hover { border-color: rgba(255,255,255,0.18); }
-  .fp-option.active {
-    border-color: rgba(77,255,160,0.4);
-    background: rgba(77,255,160,0.06);
-  }
-  /* Theme swatches */
-  .fp-themes {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-top: 4px;
-  }
-  .fp-swatch {
-    height: 48px;
-    border-radius: 8px;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: border-color 150ms ease, transform 150ms ease;
-    position: relative;
-    overflow: hidden;
-  }
-  .fp-swatch::after {
-    content: attr(data-label);
-    position: absolute;
-    bottom: 4px;
-    left: 0; right: 0;
-    text-align: center;
-    font-size: 9px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    opacity: 0.7;
-  }
-  .fp-swatch:hover { transform: scale(1.04); }
-  .fp-swatch.active { border-color: #4DFFA0; }
-    font-size: 18px;
-    line-height: 1.1;
-    margin-bottom: 4px;
-    color: rgba(255,255,255,0.85);
-    transition: color 150ms ease;
-  }
-  .fp-option.active .fp-name { color: #4DFFA0; }
-  .fp-note {
-    font-size: 11px;
-    font-weight: 300;
-    color: rgba(255,255,255,0.35);
-  }
-</style>
+<!-- ══ CHAT WIDGET ══ -->
+<button id="chat-launcher" aria-label="Открыть чат" title="Чат с ИИ-ассистентом">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" stroke="#080B10" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <span class="chat-launcher-dot"></span>
+</button>
 
-<div id="font-panel">
-  <div class="fp-header">
-    <span class="fp-title">Настройки</span>
-    <button class="fp-close" id="fp-close-btn">✕</button>
+<div id="chat-panel" class="closed">
+  <div class="chat-header">
+    <div class="chat-header-left">
+      <div class="chat-header-avatar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="chat-header-info">
+        <span class="chat-header-name">SmartBoxAI</span>
+        <span class="chat-header-status">онлайн</span>
+      </div>
+    </div>
+    <button class="chat-close-btn" id="chat-close-btn" aria-label="Закрыть чат">✕</button>
   </div>
 
-  <div class="fp-title" style="margin-bottom:12px">Шрифт</div>
-  <div id="fp-options"></div>
-
-  <div class="fp-divider"></div>
-  <div class="fp-title" style="margin-bottom:12px">Цвет акцента</div>
-  <div class="fp-themes" id="fp-accents"></div>
-
-  <div class="fp-divider"></div>
-  <div class="fp-title" style="margin-bottom:12px">Фон</div>
-  <div class="fp-themes" id="fp-themes"></div>
-
-  <div class="fp-divider"></div>
-    Размер заголовков
-    <span id="fp-size-val">100%</span>
+  <div class="chat-body" id="chat-body">
+    <!-- messages injected dynamically -->
   </div>
-  <input type="range" class="fp-slider" id="fp-size-slider" min="70" max="130" step="5" value="130">
-  <div class="fp-size-presets">
-    <div class="fp-preset" data-size="70">XS</div>
-    <div class="fp-preset" data-size="85">S</div>
-    <div class="fp-preset" data-size="100">M</div>
-    <div class="fp-preset" data-size="115">L</div>
-    <div class="fp-preset active" data-size="130">XL</div>
+
+  <div class="chat-footer">
+    <input
+      type="text"
+      class="chat-input"
+      id="chat-input"
+      placeholder="Напишите ваш вопрос..."
+      autocomplete="off"
+      maxlength="2000"
+    >
+    <button class="chat-send-btn" id="chat-send-btn" aria-label="Отправить">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 8h12M10 4l4 4-4 4" stroke="#080B10" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
   </div>
 </div>
 
 <script>
-(function() {
-  var PAIRS = [
-    { key: 'syne',     display: "'Syne', sans-serif",             body: "'DM Sans', sans-serif",        weight: 800, tracking: '-1.5px', name: 'Syne',              note: 'Агрессивный, редакционный' },
-    { key: 'grotesk',  display: "'Space Grotesk', sans-serif",    body: "'Barlow', sans-serif",          weight: 700, tracking: '-1px',  name: 'Space Grotesk',     note: 'Технический, компактный, геометричный' },
-    { key: 'jakarta',  display: "'Plus Jakarta Sans', sans-serif", body: "'Nunito Sans', sans-serif",    weight: 800, tracking: '-1px',  name: 'Plus Jakarta Sans', note: 'Современный, округлый, дружелюбный' },
-    { key: 'bebas',    display: "'Bebas Neue', sans-serif",        body: "'Source Sans 3', sans-serif",  weight: 400, tracking: '2px',   name: 'Bebas Neue',        note: 'Промышленный, высококонтрастный' },
-    { key: 'epilogue', display: "'Epilogue', sans-serif",          body: "'Outfit', sans-serif",         weight: 800, tracking: '-1px',  name: 'Epilogue',          note: 'Редакционный, структурный, точный' },
-    { key: 'raleway',  display: "'Raleway', sans-serif",           body: "'Lato', sans-serif",           weight: 800, tracking: '-0.5px',name: 'Raleway',           note: 'Элегантный, утончённый, представительный' },
-    { key: 'oswald',   display: "'Oswald', sans-serif",            body: "'Jost', sans-serif",           weight: 700, tracking: '0.5px', name: 'Oswald',            note: 'Жирный, конденсированный, авторитетный' },
-    { key: 'exo',      display: "'Exo 2', sans-serif",             body: "'Manrope', sans-serif",        weight: 800, tracking: '-1px',  name: 'Exo 2',             note: 'Футуристичный, sci-fi — текущий' }
-  ];
+  /* ════════════════════════════════════════════════════════════════════════
+     CHAT WIDGET
+  ════════════════════════════════════════════════════════════════════════ */
+  (function() {
+    var panel   = document.getElementById('chat-panel');
+    var launcher = document.getElementById('chat-launcher');
+    var closeBtn = document.getElementById('chat-close-btn');
+    var body     = document.getElementById('chat-body');
+    var input    = document.getElementById('chat-input');
+    var sendBtn  = document.getElementById('chat-send-btn');
 
-  var current = 'exo';
-  var panel   = document.getElementById('font-panel');
-  var optWrap = document.getElementById('fp-options');
-  var styleEl = document.createElement('style');
-  styleEl.id  = 'font-tweak-style';
-  document.head.appendChild(styleEl);
+    /* 🔗 URL webhook для чата — отдельный workflow в n8n */
+    var CHAT_WEBHOOK_URL = 'https://lajomipimu.beget.app/webhook/smartboxai-chat';
+    var MAX_MSGS = 100;
+    var TIMEOUT_MS = 12000;
 
-  /* Build option cards */
-  PAIRS.forEach(function(p) {
-    var el = document.createElement('div');
-    el.className = 'fp-option' + (p.key === current ? ' active' : '');
-    el.dataset.key = p.key;
-    el.innerHTML =
-      '<div class="fp-name" style="font-family:' + p.display + ';font-weight:' + p.weight + ';letter-spacing:' + p.tracking + '">' + p.name + '</div>' +
-      '<div class="fp-note" style="font-family:' + p.body + '">' + p.note + '</div>';
-    el.addEventListener('click', function() { applyFont(p.key); });
-    optWrap.appendChild(el);
-  });
+    var sessionId = localStorage.getItem('sb_chat_session') || ('sess_' + Math.random().toString(36).slice(2, 10));
+    localStorage.setItem('sb_chat_session', sessionId);
 
-  function applyFont(key) {
-    var p = PAIRS.find(function(x){ return x.key === key; });
-    if (!p) return;
-    current = key;
-    document.documentElement.style.setProperty('--font-display', p.display);
-    document.documentElement.style.setProperty('--font-body',    p.body);
-    styleEl.textContent =
-      'h1,.section-title{letter-spacing:' + p.tracking + '}';
-    optWrap.querySelectorAll('.fp-option').forEach(function(el) {
-      el.classList.toggle('active', el.dataset.key === key);
+    var history = [];
+    var isOpen = false;
+    var isTyping = false;
+
+    function now() {
+      return new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function addMsg(text, sender) {
+      var div = document.createElement('div');
+      div.className = 'chat-msg chat-msg--' + sender;
+      div.innerHTML = '<div>' + escapeHtml(text) + '</div><div class="chat-msg-time">' + now() + '</div>';
+      body.appendChild(div);
+      body.scrollTop = body.scrollHeight;
+      history.push({ sender: sender, text: text, time: now() });
+      if (history.length > MAX_MSGS) history.shift();
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    function showTyping() {
+      if (isTyping) return;
+      isTyping = true;
+      var el = document.createElement('div');
+      el.className = 'chat-typing';
+      el.id = 'chat-typing';
+      el.innerHTML = '<span>печатает</span><div class="chat-typing-dots"><div class="chat-typing-dot"></div><div class="chat-typing-dot"></div><div class="chat-typing-dot"></div></div>';
+      body.appendChild(el);
+      body.scrollTop = body.scrollHeight;
+    }
+
+    function hideTyping() {
+      isTyping = false;
+      var el = document.getElementById('chat-typing');
+      if (el) el.remove();
+    }
+
+    function showError(msg, retryFn) {
+      var div = document.createElement('div');
+      div.className = 'chat-msg chat-msg--error';
+      var html = escapeHtml(msg);
+      if (retryFn) {
+        html += '<br><button class="chat-retry-btn">Повторить</button>';
+      }
+      div.innerHTML = html;
+      if (retryFn) {
+        div.querySelector('.chat-retry-btn').addEventListener('click', function() {
+          div.remove();
+          retryFn();
+        });
+      }
+      body.appendChild(div);
+      body.scrollTop = body.scrollHeight;
+    }
+
+    function sendMessage(text) {
+      if (!text.trim()) return;
+      addMsg(text, 'user');
+      input.value = '';
+      showTyping();
+
+      fetch(CHAT_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: text.trim(),
+          sessionId: sessionId,
+          source: 'chat_widget',
+          timestamp: new Date().toISOString()
+        })
+      })
+      .then(function(r) {
+        hideTyping();
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function(data) {
+        var reply = (data && data.reply) ? data.reply : 'Получен ответ. Спасибо за вопрос!';
+        addMsg(reply, 'bot');
+      })
+      .catch(function(err) {
+        hideTyping();
+        console.error('Chat error:', err);
+        showError('Не удалось отправить сообщение. Проверьте соединение.', function() { sendMessage(text); });
+      });
+    }
+
+    launcher.addEventListener('click', function() {
+      isOpen = !isOpen;
+      panel.classList.toggle('closed', !isOpen);
+      launcher.classList.toggle('hidden', isOpen);
+      if (isOpen) setTimeout(function() { input.focus(); }, 100);
     });
-  }
 
-  /* ── THEMES ── */
-  var THEMES = [
-    { key: 'dark',      label: 'Тёмная',    bg: '#080B10', surface: '#0D1117',
-      text1: '#ffffff', text2: 'rgba(255,255,255,0.60)', text3: 'rgba(255,255,255,0.38)', text4: 'rgba(255,255,255,0.20)',
-      border: 'rgba(255,255,255,0.12)', borderMid: 'rgba(255,255,255,0.20)',
-      accent: '#4DFFA0', accentText: '#080B10', navBg: 'rgba(8,11,16,0.90)', panelBg: '#0D1117', panelBorder: 'rgba(255,255,255,0.14)' },
-    { key: 'purple',    label: 'Фиолет.',   bg: '#0A060F', surface: '#130E1A',
-      text1: '#ffffff', text2: 'rgba(255,255,255,0.60)', text3: 'rgba(255,255,255,0.38)', text4: 'rgba(255,255,255,0.20)',
-      border: 'rgba(255,255,255,0.12)', borderMid: 'rgba(255,255,255,0.20)',
-      accent: '#4DFFA0', accentText: '#0A060F', navBg: 'rgba(10,6,15,0.90)', panelBg: '#130E1A', panelBorder: 'rgba(255,255,255,0.14)' },
-    { key: 'navy',      label: 'Тёмно-синий', bg: '#060D1A', surface: '#0A1525',
-      text1: '#ffffff', text2: 'rgba(255,255,255,0.60)', text3: 'rgba(255,255,255,0.38)', text4: 'rgba(255,255,255,0.20)',
-      border: 'rgba(255,255,255,0.12)', borderMid: 'rgba(255,255,255,0.20)',
-      accent: '#4DFFA0', accentText: '#060D1A', navBg: 'rgba(6,13,26,0.90)', panelBg: '#0A1525', panelBorder: 'rgba(255,255,255,0.14)' },
-    { key: 'steel',     label: 'Стальной',  bg: '#080F1C', surface: '#0D1630',
-      text1: '#ffffff', text2: 'rgba(255,255,255,0.60)', text3: 'rgba(255,255,255,0.38)', text4: 'rgba(255,255,255,0.20)',
-      border: 'rgba(255,255,255,0.12)', borderMid: 'rgba(255,255,255,0.20)',
-      accent: '#4DFFA0', accentText: '#080F1C', navBg: 'rgba(8,15,28,0.90)', panelBg: '#0D1630', panelBorder: 'rgba(255,255,255,0.14)' },
-    { key: 'skyblue',   label: 'Небесный',  bg: '#E8EFF8', surface: '#D8E5F5',
-      text1: '#0A1020', text2: 'rgba(10,16,32,0.58)', text3: 'rgba(10,16,32,0.40)', text4: 'rgba(10,16,32,0.20)',
-      border: 'rgba(10,16,32,0.12)', borderMid: 'rgba(10,16,32,0.20)',
-      accent: '#0055CC', accentText: '#E8EFF8', navBg: 'rgba(232,239,248,0.94)', panelBg: '#D8E5F5', panelBorder: 'rgba(10,16,32,0.14)' },
-    { key: 'iceblue',   label: 'Ледяной',   bg: '#F0F5FC', surface: '#E2EBF8',
-      text1: '#08101E', text2: 'rgba(8,16,30,0.58)', text3: 'rgba(8,16,30,0.40)', text4: 'rgba(8,16,30,0.20)',
-      border: 'rgba(8,16,30,0.12)', borderMid: 'rgba(8,16,30,0.20)',
-      accent: '#0055CC', accentText: '#F0F5FC', navBg: 'rgba(240,245,252,0.94)', panelBg: '#E2EBF8', panelBorder: 'rgba(8,16,30,0.14)' },
-    { key: 'beige1',    label: 'Кремовый',  bg: '#F5F2EC', surface: '#EAE5DC',
-      text1: '#0E0E14', text2: 'rgba(14,14,20,0.60)', text3: 'rgba(14,14,20,0.42)', text4: 'rgba(14,14,20,0.22)',
-      border: 'rgba(0,0,0,0.12)', borderMid: 'rgba(0,0,0,0.20)',
-      accent: '#00885A', accentText: '#F5F2EC', navBg: 'rgba(245,242,236,0.94)', panelBg: '#EAE5DC', panelBorder: 'rgba(0,0,0,0.14)' },
-    { key: 'beige2',    label: 'Пшеница',   bg: '#EDE7DA', surface: '#E0D9CC',
-      text1: '#0E0B08', text2: 'rgba(14,11,8,0.60)', text3: 'rgba(14,11,8,0.42)', text4: 'rgba(14,11,8,0.22)',
-      border: 'rgba(0,0,0,0.12)', borderMid: 'rgba(0,0,0,0.20)',
-      accent: '#00885A', accentText: '#EDE7DA', navBg: 'rgba(237,231,218,0.94)', panelBg: '#E0D9CC', panelBorder: 'rgba(0,0,0,0.14)' },
-    { key: 'beige3',    label: 'Какао',     bg: '#DDD5C6', surface: '#CFC7B6',
-      text1: '#140F0A', text2: 'rgba(20,15,10,0.60)', text3: 'rgba(20,15,10,0.42)', text4: 'rgba(20,15,10,0.22)',
-      border: 'rgba(0,0,0,0.14)', borderMid: 'rgba(0,0,0,0.22)',
-      accent: '#00885A', accentText: '#DDD5C6', navBg: 'rgba(221,213,198,0.94)', panelBg: '#CFC7B6', panelBorder: 'rgba(0,0,0,0.16)' }
-  ];
-
-  var currentTheme = 'dark';
-  var themeWrap = document.getElementById('fp-themes');
-  var themeStyleEl = document.createElement('style');
-  themeStyleEl.id = 'theme-tweak-style';
-  document.head.appendChild(themeStyleEl);
-
-  THEMES.forEach(function(t) {
-    var sw = document.createElement('div');
-    sw.className = 'fp-swatch' + (t.key === currentTheme ? ' active' : '');
-    sw.dataset.key   = t.key;
-    sw.dataset.label = t.label;
-    sw.style.background = t.bg;
-    sw.style.color = t.text1;
-    // show surface as bottom strip
-    sw.style.boxShadow = 'inset 0 -12px 0 ' + t.surface;
-    sw.addEventListener('click', function() { applyTheme(t.key); });
-    themeWrap.appendChild(sw);
-  });
-
-  function applyTheme(key) {
-    var t = THEMES.find(function(x){ return x.key === key; });
-    if (!t) return;
-    currentTheme = key;
-    var root = document.documentElement;
-    root.style.setProperty('--bg',         t.bg);
-    root.style.setProperty('--surface',    t.surface);
-    root.style.setProperty('--text-1',     t.text1);
-    root.style.setProperty('--text-2',     t.text2);
-    root.style.setProperty('--text-3',     t.text3);
-    root.style.setProperty('--text-4',     t.text4);
-    root.style.setProperty('--border',     t.border);
-    root.style.setProperty('--border-mid', t.borderMid);
-    root.style.setProperty('--accent',     t.accent);
-    document.body.style.backgroundColor = t.bg;
-    // nav scrolled bg
-    themeStyleEl.textContent =
-      '#nav.scrolled { background: ' + t.navBg + ' !important; }' +
-      '.btn-primary, .btn-demo, .btn-submit { color: ' + t.accentText + ' !important; }' +
-      '#font-panel { background: ' + t.panelBg + ' !important; border-color: ' + t.panelBorder + ' !important; }';
-    themeWrap.querySelectorAll('.fp-swatch').forEach(function(el) {
-      el.classList.toggle('active', el.dataset.key === key);
+    closeBtn.addEventListener('click', function() {
+      isOpen = false;
+      panel.classList.add('closed');
+      launcher.classList.remove('hidden');
     });
-  }
 
-  /* Size slider */
-  var sizeSlider   = document.getElementById('fp-size-slider');
-  var sizeVal      = document.getElementById('fp-size-val');
-  var sizePresets  = document.querySelectorAll('.fp-preset');
-  var sizeStyleEl  = document.createElement('style');
-  sizeStyleEl.id   = 'size-tweak-style';
-  document.head.appendChild(sizeStyleEl);
-
-  function applySize(pct) {
-    var scale = pct / 100;
-    sizeStyleEl.textContent =
-      /* h1: vw scales, but max is hard-capped at 58px to prevent Russian text wrap */
-      'h1 { font-size: clamp(' + Math.round(32*scale) + 'px, ' + (4.2*scale).toFixed(2) + 'vw, 58px) !important; line-height: 1.05; margin-bottom: 32px; }' +
-      '.section-title { font-size: clamp(' + Math.round(26*scale) + 'px, ' + (2.6*scale).toFixed(2) + 'vw, ' + Math.round(38*scale) + 'px) !important; }' +
-      '.metric-number { font-size: clamp(' + Math.round(30*scale) + 'px, ' + (3.2*scale).toFixed(2) + 'vw, ' + Math.round(52*scale) + 'px) !important; }' +
-      '@media (max-width: 600px) {' +
-        'h1 { font-size: clamp(28px, 9vw, ' + Math.round(44*Math.min(scale,1.1)) + 'px) !important; line-height: 1.1; }' +
-        '.section-title { font-size: clamp(20px, 7vw, 30px) !important; }' +
-        '.metric-number { font-size: clamp(28px, 8vw, 40px) !important; }' +
-      '}' +
-      '@media (max-width: 380px) {' +
-        'h1 { font-size: 26px !important; }' +
-      '}';
-    sizeVal.textContent = pct + '%';
-    sizeSlider.value = pct;
-    sizePresets.forEach(function(p) {
-      p.classList.toggle('active', parseInt(p.dataset.size) === pct);
+    sendBtn.addEventListener('click', function() { sendMessage(input.value); });
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage(input.value);
+      }
     });
-  }
 
-  sizeSlider.addEventListener('input', function() {
-    applySize(parseInt(this.value));
-  });
-
-  sizePresets.forEach(function(p) {
-    p.addEventListener('click', function() {
-      applySize(parseInt(this.dataset.size));
+    /* Click outside to close */
+    document.addEventListener('click', function(e) {
+      if (!isOpen) return;
+      if (!panel.contains(e.target) && !launcher.contains(e.target)) {
+        isOpen = false;
+        panel.classList.add('closed');
+        launcher.classList.remove('hidden');
+      }
     });
-  });
-
-  applySize(130);
-
-  /* ── ACCENT COLORS ── */
-  var ACCENTS = [
-    { key: 'mint',   color: '#4DFFA0', label: 'Мята',   dark: true  },
-    { key: 'blue',   color: '#4D9FFF', label: 'Синий',  dark: true  },
-    { key: 'coral',  color: '#FF7A4D', label: 'Коралл', dark: true  },
-    { key: 'purple', color: '#A78BFA', label: 'Фиолет', dark: true  },
-    { key: 'gold',   color: '#FFD04D', label: 'Золото', dark: true  },
-    { key: 'white',  color: '#FFFFFF', label: 'Белый',  dark: false }
-  ];
-
-  var currentAccent = 'mint';
-  var accentWrap = document.getElementById('fp-accents');
-  var accentStyleEl = document.createElement('style');
-  accentStyleEl.id = 'accent-tweak-style';
-  document.head.appendChild(accentStyleEl);
-
-  ACCENTS.forEach(function(a) {
-    var sw = document.createElement('div');
-    sw.className = 'fp-swatch' + (a.key === currentAccent ? ' active' : '');
-    sw.dataset.key   = a.key;
-    sw.dataset.label = a.label;
-    sw.style.background = a.color;
-    sw.style.color = a.dark ? '#080B10' : '#ffffff';
-    sw.addEventListener('click', function() { applyAccent(a.key); });
-    accentWrap.appendChild(sw);
-  });
-
-  function applyAccent(key) {
-    var a = ACCENTS.find(function(x){ return x.key === key; });
-    if (!a) return;
-    currentAccent = key;
-    document.documentElement.style.setProperty('--accent', a.color);
-    accentStyleEl.textContent =
-      '.btn-primary,.btn-demo,.btn-submit { color: ' + (a.dark ? '#080B10' : '#ffffff') + ' !important; }' +
-      '.hero-badge { border-color: ' + a.color.replace(')', ',0.35)').replace('rgb','rgba') + '; color: ' + a.color + '; }' +
-      '.hero-badge::before { background: ' + a.color + '; }' +
-      'h1 span, .section-label, .metric-number, .step-time, .step-circle { color: ' + a.color + ' !important; }' +
-      '.step-circle { border-color: ' + a.color + ' !important; }' +
-      '.service-card:nth-child(1)::before { background: ' + a.color + '; }' +
-      '.service-card:nth-child(1) .outcome-num { color: ' + a.color + '; }' +
-      '.service-outcomes li::before { color: ' + a.color + '; }';
-    accentWrap.querySelectorAll('.fp-swatch').forEach(function(el) {
-      el.classList.toggle('active', el.dataset.key === key);
+    panel.addEventListener('click', function(e) {
+      e.stopPropagation();
     });
-  }
 
-  /* ── CLOSE + HOST PROTOCOL ── */
-  document.getElementById('fp-close-btn').addEventListener('click', function() {
-    panel.classList.remove('open');
-    window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*');
-  });
-
-  /* Host protocol */
-  window.addEventListener('message', function(e) {
-    if (e.data && e.data.type === '__activate_edit_mode')   panel.classList.add('open');
-    if (e.data && e.data.type === '__deactivate_edit_mode') panel.classList.remove('open');
-  });
-  window.parent.postMessage({ type: '__edit_mode_available' }, '*');
-})();
+    console.log('Chat widget ready. Webhook:', CHAT_WEBHOOK_URL);
+  })();
 </script>
 
 </body>
